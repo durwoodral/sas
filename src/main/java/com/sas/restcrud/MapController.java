@@ -1,6 +1,6 @@
 package com.sas.restcrud;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -15,6 +15,7 @@ import java.util.HashMap;
 @RestController
 public class MapController {
 
+	// Assuming keys are unique, HashMap of key=value pairs is natural data structure.
 	private static HashMap<String, String> resources = new HashMap<String, String>();
 
 	// Use POST for creation.
@@ -26,14 +27,14 @@ public class MapController {
 		// Does the key exist?
 		if (resources.get(key) == null) {
 			MapResource mapResource = new MapResource(key, value);
-			mapResource.add(linkTo(methodOn(MapController.class).create(key, value)).withSelfRel());
+			mapResource.add(ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(MapController.class).create(key, value)).withSelfRel());
 			
 			// Add the valude to the map.
 			resources.put(key, value);
 			return new ResponseEntity<>(mapResource, HttpStatus.CREATED);
 		}
 
-		// resolve error return
+		// return key exists
 		return new ResponseEntity<>(new MapResource(key, "exists"), HttpStatus.OK);
 	}
 	
@@ -45,12 +46,12 @@ public class MapController {
 		// Does the key exist?
 		if (resources.get(key) != null) {
 			MapResource mapResource = new MapResource(key, resources.get(key));
-			mapResource.add(linkTo(methodOn(MapController.class).read(key)).withSelfRel());
+			mapResource.add(ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(MapController.class).read(key)).withSelfRel());
 			return new ResponseEntity<>(mapResource, HttpStatus.OK);
 		}
 
-		// resolve error return
-		return new ResponseEntity<>(new MapResource(key, "doesn't exist"), HttpStatus.NOT_FOUND);
+		// key doesn't exist
+		return new ResponseEntity<>(new MapResource(key, "doesn't exist"), HttpStatus.OK);
 	}
 
 	// Use PUT for updating.
@@ -65,12 +66,12 @@ public class MapController {
 			resources.put(key, value);
 			
 			MapResource mapResource = new MapResource(key, resources.get(key));
-			mapResource.add(linkTo(methodOn(MapController.class).update(key, value)).withSelfRel());
+			mapResource.add(ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(MapController.class).update(key, value)).withSelfRel());
 			return new ResponseEntity<>(mapResource, HttpStatus.OK);
 		}
 
-		// resolve error return
-		return new ResponseEntity<>(new MapResource(key, "doesn't exist"), HttpStatus.NOT_FOUND);
+		// key doesn't exist
+		return new ResponseEntity<>(new MapResource(key, "doesn't exist"), HttpStatus.OK);
 	}
 
 	// Use DELETE for deleting.
@@ -83,13 +84,13 @@ public class MapController {
 			// Update the value in the map.
 			resources.remove(key);
 			
-			MapResource mapResource = new MapResource(key, "removed");
-			mapResource.add(linkTo(methodOn(MapController.class).delete(key)).withSelfRel());
+			MapResource mapResource = new MapResource(key, "deleted");
+			mapResource.add(ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(MapController.class).delete(key)).withSelfRel());
 			return new ResponseEntity<>(mapResource, HttpStatus.OK);
 		}
 
-		// resolve error return
-		return new ResponseEntity<>(new MapResource(key, "doesn't exist"), HttpStatus.NOT_FOUND);
+		// key doesn't exist
+		return new ResponseEntity<>(new MapResource(key, "doesn't exist"), HttpStatus.OK);
 	}
 
 }
