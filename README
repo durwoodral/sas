@@ -1,0 +1,8 @@
+Run with gradlew runBoot
+
+Sample urls:
+
+http://localhost:8080/create?key=why&value=now
+http://localhost:8080/read?key=why
+http://localhost:8080/update?key=why&value=andthen
+http://localhost:8080/delete?key=why
